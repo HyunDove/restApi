@@ -9,12 +9,12 @@ import com.patient.demo.entity.ImageEntity;
 
 @Repository
 public interface ImageRepository extends JpaRepository<ImageEntity, Long> {
-	@Query(value = 
-			"select b.* " + 
-			"from patient_info a right join patient_images b " + 
-			"on a.seq = b.patient_seq " + 
-			"where a.name = :name " + 
-			"and b.delete_flag = '미삭제' "
-			, nativeQuery = true)
-	ImageEntity findByName(@Param("name") String name);
+    @Query(value = 
+            "select b.* " + 
+            "from patient_info a right join patient_images b " + 
+            "on a.seq = b.patient_seq " + 
+            "where a.name = :name " + 
+            "and b.delete_flag = '미삭제' "
+            , nativeQuery = true)
+    ImageEntity findByName(@Param("name") String name);
 }

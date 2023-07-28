@@ -34,84 +34,84 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @PropertySource("classpath:system.properties")
 public class DefaultService {
-	
+    
     private final PatientRepository patientRepository;
     private final ImageRepository ImageRepository;
-	private final EntityManagerFactory entityManagerFactory;
-	
-	@Value("${local.path}")
-	private String folderPath;
-	
-	public List<PatientEntity> patientOriginalList(String name){
-		return patientRepository.findByName(name);
-	}
-	
-	public List<SearchSummary> patientList(){
-	    return patientRepository.findAllList();
-	}
-	
-	public List<SearchSummary> patientList(String name){
-	/*
-	 * 2023-07-27 native query를 위하여 주석처리
-	 * Specification<PatientEntity> spec = (root,query,criteriaBuilder) -> null;
-	 * spec = spec.and(PatientSpecification.equalsDelete_flag("미삭제")); spec =
-	 * spec.and(PatientSpecification.equalsSeq(seq.get()));
-	 */
-		
-		return patientRepository.findSearchName(name);
-	}
-	
-	public ImageEntity ImagetList(String name){
-		return ImageRepository.findByName(name);
-	}
-	
-	public PatientEntity patientInsert(PatientEntity patientEntity){
-		return patientRepository.save(patientEntity);
-	}
-	
-	public ImageEntity uploadImage(HashMap<String, Object> params) throws IllegalStateException, IOException {
-		
+    private final EntityManagerFactory entityManagerFactory;
+    
+    @Value("${local.path}")
+    private String folderPath;
+    
+    public List<PatientEntity> patientOriginalList(String name){
+        return patientRepository.findByName(name);
+    }
+    
+    public List<SearchSummary> patientList(){
+        return patientRepository.findAllList();
+    }
+    
+    public List<SearchSummary> patientList(String name){
+    /*
+     * 2023-07-27 native query를 위하여 주석처리
+     * Specification<PatientEntity> spec = (root,query,criteriaBuilder) -> null;
+     * spec = spec.and(PatientSpecification.equalsDelete_flag("미삭제")); spec =
+     * spec.and(PatientSpecification.equalsSeq(seq.get()));
+     */
+        
+        return patientRepository.findSearchName(name);
+    }
+    
+    public ImageEntity ImagetList(String name){
+        return ImageRepository.findByName(name);
+    }
+    
+    public PatientEntity patientInsert(PatientEntity patientEntity){
+        return patientRepository.save(patientEntity);
+    }
+    
+    public ImageEntity uploadImage(HashMap<String, Object> params) throws IllegalStateException, IOException {
+        
         ImageEntity imageEntity = ImageRepository.save(
-        		ImageEntity.builder()
+                ImageEntity.builder()
                         .name(params.get("name").toString())
                         .type(params.get("type").toString())
                         .size(Long.parseLong(params.get("size").toString()))
                         .patient_seq(Integer.parseInt(params.get("patient_seq").toString()))
                         .path(params.get("path").toString())
                         .build());
-		
+        
         if(imageEntity == null) throw new ApiException(ExceptionEnum.RUNTIME_EXCEPTION);
-		
+        
         return imageEntity;
     }
 
-	public byte[] downloadImageFromFileSystem(String name) throws IOException {
-		
-		ImageEntity imageHashMap = ImageRepository.findByName(name);
-		
-		if(imageHashMap == null) throw new ApiException(ExceptionEnum.NO_DATA);
-		
-		String fileFullPath = folderPath + File.separator + name + imageHashMap.getType();
-		 
+    public byte[] downloadImageFromFileSystem(String name) throws IOException {
+        
+        ImageEntity imageHashMap = ImageRepository.findByName(name);
+        
+        if(imageHashMap == null) throw new ApiException(ExceptionEnum.NO_DATA);
+        
+        String fileFullPath = folderPath + File.separator + name + imageHashMap.getType();
+         
         return Files.readAllBytes(new File(fileFullPath).toPath());
     }
-	
-	/* Dirty Checking
-	 * 설정한 값만 수정하게 구현 
-	 */
-	@Transactional
-	public void patientDelete(String name, int seq){
-		EntityManager em = entityManagerFactory.createEntityManager();
-		EntityTransaction tx = em.getTransaction();
-		tx.begin();
-		PatientEntity info_ent = em.find(PatientEntity.class, name);
-		info_ent.setDelete_flag("삭제");
-		info_ent.setDelete_date(LocalDateTime.now());
-		
-		ImageEntity file_ent = em.find(ImageEntity.class, seq);
-		file_ent.setDelete_flag("삭제");
-		file_ent.setDelete_date(LocalDateTime.now());
-		tx.commit();
-	}
-	
+    
+    /* Dirty Checking
+     * 설정한 값만 수정하게 구현 
+     */
+    @Transactional
+    public void patientDelete(String name, int seq){
+        EntityManager em = entityManagerFactory.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+        tx.begin();
+        PatientEntity info_ent = em.find(PatientEntity.class, name);
+        info_ent.setDelete_flag("삭제");
+        info_ent.setDelete_date(LocalDateTime.now());
+        
+        ImageEntity file_ent = em.find(ImageEntity.class, seq);
+        file_ent.setDelete_flag("삭제");
+        file_ent.setDelete_date(LocalDateTime.now());
+        tx.commit();
+    }
+    
 }

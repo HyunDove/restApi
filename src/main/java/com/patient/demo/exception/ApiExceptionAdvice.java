@@ -13,12 +13,12 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RestControllerAdvice
 public class ApiExceptionAdvice {
-	
-	@ExceptionHandler({NumberFormatException.class})
+    
+    @ExceptionHandler({NumberFormatException.class})
     public ResponseEntity<ApiEntity> exceptionHandler(HttpServletRequest request, final NumberFormatException e) {
-    	
-    	log.error("NumberFormatException : {} | {}", e);
-    	
+        
+        log.error("NumberFormatException : {} | {}", e);
+        
         return ResponseEntity
                 .status(ExceptionEnum.RUNTIME_EXCEPTION.getStatus())
                 .body(ApiEntity.builder()
@@ -26,12 +26,12 @@ public class ApiExceptionAdvice {
                         .Message(e.getMessage())
                         .build());
     }
-	
+    
     @ExceptionHandler({RuntimeException.class})
     public ResponseEntity<ApiEntity> exceptionHandler(HttpServletRequest request, final RuntimeException e) {
-    	
-    	log.error("RuntimeException : {}", e.toString());
-    	
+        
+        log.error("RuntimeException : {}", e.toString());
+        
         return ResponseEntity
                 .status(ExceptionEnum.RUNTIME_EXCEPTION.getStatus())
                 .body(ApiEntity.builder()
@@ -42,9 +42,9 @@ public class ApiExceptionAdvice {
 
     @ExceptionHandler({Exception.class})
     public ResponseEntity<ApiEntity> exceptionHandler(HttpServletRequest request, final Exception e) {
-    	
-    	log.error("Exception : {}", e.toString());
-    	
+        
+        log.error("Exception : {}", e.toString());
+        
         return ResponseEntity
                 .status(ExceptionEnum.INTERNAL_SERVER_ERROR.getStatus())
                 .body(ApiEntity.builder()

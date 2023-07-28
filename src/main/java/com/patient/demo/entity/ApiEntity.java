@@ -22,10 +22,10 @@ public class ApiEntity {
     private List<SearchSummary> result;
     
     @Builder
-	public ApiEntity(HttpStatus status, String Code, String Message, List<SearchSummary> result) {
-		this.Message = Message;
-		this.Code = Code;
-		this.result = result;
-	}
-	 
+    public ApiEntity(HttpStatus status, String Code, String Message, List<SearchSummary> result) {
+        this.Message = Message;
+        this.Code = Code;
+        this.result = result;
+    }
+     
 }

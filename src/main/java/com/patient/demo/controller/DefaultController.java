@@ -45,178 +45,178 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping(value = "/api/v1")
 @Api(tags = {"환자 CRD를 위한 Controller"},description = " ")
 public class DefaultController {
-	
-	private final DefaultService defaultService;
-	private final Common common;
-	
-	// 파일이 저장 될  경로
-	@Value("${local.path}")
-	private String folderPath;
-	
-	@ApiOperation(value = "환자 목록 조회", notes = ""
-			+ "name 값을 입력하지않으면 모든 환자 조회 \n "
-			+ "name 값을 입력하면 해당 환자 조회한다. \n"
-			+ "※ 단 이미지까지 업로드 한 환자만 조회된다.")
-	@ApiImplicitParam(name="name", value="이름", dataType="String")
-	@GetMapping(value = {"/patient"})
-		public ResponseEntity<ApiEntity> patient_search(@RequestParam(required = false) String name) {
-		 
-		List<SearchSummary> patientList;
-		
-		/* 
-		 * 데이터가 없을 시 전체조회, 데이터가 있으면 해당 parameter만 조회
-		 */
-		if("".equals(name) || name == null) patientList = defaultService.patientList(); 
-		else patientList = defaultService.patientList(name);
-		
-		log.info("get patient | param => name : {}", name);
-		
-		if(patientList.isEmpty()) {
-			log.error("get patient | param NO_DATA Exception");
-			throw new ApiException(ExceptionEnum.NO_DATA);
-		}else{
-		
-			log.info("get patient | search success");
-			return ResponseEntity.status(HttpStatus.OK)
-								 .body(ApiEntity.builder()
-								 .Code("success")
-								 .Message("정상적으로 조회되었습니다.")
-								 .result(patientList)
-								 .build());
-		}
-	}
-	
-	
-	@ApiOperation(value = "환자 등록", notes = ""
-			+ "환자 정보를 등록한다.\n"
-			+ "※ 단 이미지까지 업로드 한 환자만 조회된다.")
-	@PostMapping("/patient")
-	public ResponseEntity<ApiEntity> patient_insert(@RequestBody(required = true) PatientEntity params) {
-		
-		if( params == null || 
-				params.getName().isEmpty() ||
-				Integer.valueOf(params.getAge()) == null ||
-				params.getGender().isEmpty() ||
-				params.getDisease().isEmpty()) 
-		{
-			log.error("post patient | param no_data Exception");
-			throw new ApiException(ExceptionEnum.NO_Parameter);
-		}
-			
-		log.info("post patient | params => params : {}", params);
-		
-		if(!defaultService.patientOriginalList(params.getName()).isEmpty()) {
-			log.error("post patient | insert => ALREADY_SEARCH Exception");
-			throw new ApiException(ExceptionEnum.ALREADY_SEARCH); 
-		}
-		
-		PatientEntity patientEntity = PatientEntity.builder().
-									  name(params.getName()).
-									  age(Integer.valueOf(params.getAge())).
-									  gender(params.getName()).
-									  disease(params.getName()).
-									  delete_flag("미삭제").
-									  build();
-		
-		if(defaultService.patientInsert(patientEntity) == null) {
-			log.error("post patient | RUNTIME EXCEPTION");
-			throw new ApiException(ExceptionEnum.RUNTIME_EXCEPTION);
-		}
-		
-		log.info("post patient | success");
-		return ResponseEntity.status(HttpStatus.OK)
-							 .body(ApiEntity.builder()
-							 .Code("success")
-							 .Message("[" + params.getName() + "] 님이 정상적으로 등록되었습니다. 이미지를 업로드해야 조회됩니다.")
-							 .build());
-	}
-	
-	@ApiOperation(value = "환자 파일 업로드", notes = "해당 환자 데이터에 이미지 파일을 업로드한다. ( jpg / png 파일만 가능 ) ")
-	@ApiImplicitParam(name = "name", value = "이름", dataType = "String")
+    
+    private final DefaultService defaultService;
+    private final Common common;
+    
+    // 파일이 저장 될  경로
+    @Value("${local.path}")
+    private String folderPath;
+    
+    @ApiOperation(value = "환자 목록 조회", notes = ""
+            + "name 값을 입력하지않으면 모든 환자 조회 \n "
+            + "name 값을 입력하면 해당 환자 조회한다. \n"
+            + "※ 단 이미지까지 업로드 한 환자만 조회된다.")
+    @ApiImplicitParam(name="name", value="이름", dataType="String")
+    @GetMapping(value = {"/patient"})
+        public ResponseEntity<ApiEntity> patient_search(@RequestParam(required = false) String name) {
+         
+        List<SearchSummary> patientList;
+        
+        /* 
+         * 데이터가 없을 시 전체조회, 데이터가 있으면 해당 parameter만 조회
+         */
+        if("".equals(name) || name == null) patientList = defaultService.patientList(); 
+        else patientList = defaultService.patientList(name);
+        
+        log.info("get patient | param => name : {}", name);
+        
+        if(patientList.isEmpty()) {
+            log.error("get patient | param NO_DATA Exception");
+            throw new ApiException(ExceptionEnum.NO_DATA);
+        }else{
+        
+            log.info("get patient | search success");
+            return ResponseEntity.status(HttpStatus.OK)
+                                 .body(ApiEntity.builder()
+                                 .Code("success")
+                                 .Message("정상적으로 조회되었습니다.")
+                                 .result(patientList)
+                                 .build());
+        }
+    }
+    
+    
+    @ApiOperation(value = "환자 등록", notes = ""
+            + "환자 정보를 등록한다.\n"
+            + "※ 단 이미지까지 업로드 한 환자만 조회된다.")
+    @PostMapping("/patient")
+    public ResponseEntity<ApiEntity> patient_insert(@RequestBody(required = true) PatientEntity params) {
+        
+        if( params == null || 
+                params.getName().isEmpty() ||
+                Integer.valueOf(params.getAge()) == null ||
+                params.getGender().isEmpty() ||
+                params.getDisease().isEmpty()) 
+        {
+            log.error("post patient | param no_data Exception");
+            throw new ApiException(ExceptionEnum.NO_Parameter);
+        }
+            
+        log.info("post patient | params => params : {}", params);
+        
+        if(!defaultService.patientOriginalList(params.getName()).isEmpty()) {
+            log.error("post patient | insert => ALREADY_SEARCH Exception");
+            throw new ApiException(ExceptionEnum.ALREADY_SEARCH); 
+        }
+        
+        PatientEntity patientEntity = PatientEntity.builder().
+                                      name(params.getName()).
+                                      age(Integer.valueOf(params.getAge())).
+                                      gender(params.getName()).
+                                      disease(params.getName()).
+                                      delete_flag("미삭제").
+                                      build();
+        
+        if(defaultService.patientInsert(patientEntity) == null) {
+            log.error("post patient | RUNTIME EXCEPTION");
+            throw new ApiException(ExceptionEnum.RUNTIME_EXCEPTION);
+        }
+        
+        log.info("post patient | success");
+        return ResponseEntity.status(HttpStatus.OK)
+                             .body(ApiEntity.builder()
+                             .Code("success")
+                             .Message("[" + params.getName() + "] 님이 정상적으로 등록되었습니다. 이미지를 업로드해야 조회됩니다.")
+                             .build());
+    }
+    
+    @ApiOperation(value = "환자 파일 업로드", notes = "해당 환자 데이터에 이미지 파일을 업로드한다. ( jpg / png 파일만 가능 ) ")
+    @ApiImplicitParam(name = "name", value = "이름", dataType = "String")
     @PostMapping(value = "/patient/image")
     public ResponseEntity<ApiEntity> uploadImage(@RequestPart(name = "image", required = true) MultipartFile image, @RequestParam(name = "name", required = true) Optional<String> name) throws IllegalStateException, IOException {
-    	
-    	if(!name.isPresent()) {
-    		log.error("post patient_image | NO_Parameter EXCEPTION");
-    		throw new ApiException(ExceptionEnum.NO_Parameter); 
-    	}
-    	
-    	log.info("post patient_image | param => name : {}", image.getContentType() ,name);
-    	
-    	List<PatientEntity> patientEntity = defaultService.patientOriginalList(name.get());
-    	
-    	if(defaultService.ImagetList(name.get()) != null) {
-    		log.error("post patient_image | ALREADY_FILE EXCEPTION");
-    		throw new ApiException(ExceptionEnum.ALREADY_FILE);
-    	}
-    	
-    	if(patientEntity.isEmpty()) {
-    		log.error("post patient_image | NO_DATA EXCEPTION");
-    		throw new ApiException(ExceptionEnum.NO_DATA);
-    	}
-    	
-    	File folder = new File(folderPath);
-    	String contentType = common.getFileType(image.getContentType());
-    	
-		if(!folder.isDirectory()) {
+        
+        if(!name.isPresent()) {
+            log.error("post patient_image | NO_Parameter EXCEPTION");
+            throw new ApiException(ExceptionEnum.NO_Parameter); 
+        }
+        
+        log.info("post patient_image | param => name : {}", image.getContentType() ,name);
+        
+        List<PatientEntity> patientEntity = defaultService.patientOriginalList(name.get());
+        
+        if(defaultService.ImagetList(name.get()) != null) {
+            log.error("post patient_image | ALREADY_FILE EXCEPTION");
+            throw new ApiException(ExceptionEnum.ALREADY_FILE);
+        }
+        
+        if(patientEntity.isEmpty()) {
+            log.error("post patient_image | NO_DATA EXCEPTION");
+            throw new ApiException(ExceptionEnum.NO_DATA);
+        }
+        
+        File folder = new File(folderPath);
+        String contentType = common.getFileType(image.getContentType());
+        
+        if(!folder.isDirectory()) {
             folder.mkdirs();
         }
         
         if (image.isEmpty()) {
-        	log.error("post patient_image | EMPTY_FILE EXCEPTION");
-			throw new ApiException(ExceptionEnum.EMPTY_FILE);
-		} else {
-			
-			if (ObjectUtils.isEmpty(contentType)) {
-				log.error("post patient_image | CHECK_FILE EXCEPTION");
-				throw new ApiException(ExceptionEnum.CHECK_FILE); 
-			}
-			
-			String fullFilePath = folderPath + File.separator + name.get() + contentType;
-			File image_file = new File(fullFilePath);
-			
-			image.transferTo(image_file);
-			
-		}
+            log.error("post patient_image | EMPTY_FILE EXCEPTION");
+            throw new ApiException(ExceptionEnum.EMPTY_FILE);
+        } else {
+            
+            if (ObjectUtils.isEmpty(contentType)) {
+                log.error("post patient_image | CHECK_FILE EXCEPTION");
+                throw new ApiException(ExceptionEnum.CHECK_FILE); 
+            }
+            
+            String fullFilePath = folderPath + File.separator + name.get() + contentType;
+            File image_file = new File(fullFilePath);
+            
+            image.transferTo(image_file);
+            
+        }
         
-		HashMap<String, Object> params = new HashMap<String, Object>();
-		
-		String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
+        HashMap<String, Object> params = new HashMap<String, Object>();
+        
+        String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("api/v1/patient/image/")
                 .path(name.get()+"")
                 .toUriString();
-		
-		params.put("name", image.getOriginalFilename());
-		params.put("type", contentType);
-		params.put("size", image.getSize());
-		params.put("patient_seq", patientEntity.get(0).getSeq());
-		params.put("path", fileDownloadUri);
-		
+        
+        params.put("name", image.getOriginalFilename());
+        params.put("type", contentType);
+        params.put("size", image.getSize());
+        params.put("patient_seq", patientEntity.get(0).getSeq());
+        params.put("path", fileDownloadUri);
+        
         if(defaultService.uploadImage(params) == null) {
-        	log.error("post patient_image | RUNTIME EXCEPTION");
-        	throw new ApiException(ExceptionEnum.RUNTIME_EXCEPTION);
+            log.error("post patient_image | RUNTIME EXCEPTION");
+            throw new ApiException(ExceptionEnum.RUNTIME_EXCEPTION);
         }
         
         log.info("post patient_image | success");
         return ResponseEntity.status(HttpStatus.OK)
-							 .body(ApiEntity.builder()
-							 .Code("success")
-							 .Message("정상적으로 업로드 되었습니다.")
-							 .build());
+                             .body(ApiEntity.builder()
+                             .Code("success")
+                             .Message("정상적으로 업로드 되었습니다.")
+                             .build());
     }
 
     @GetMapping(value = {"/patient/{name}/image"})
     @ApiOperation(value = "환자 파일 가져오기", notes = "해당 환자 데이터에 등록된 이미지파일을 가져온다.")
     @ApiImplicitParam(name="name", value="이름", dataType="String")
-    	public ResponseEntity<?> downloadImageToFileSystem(@RequestParam(required = true) Optional<String> name) throws IOException {
-    	
-    	if(!name.isPresent()) {
-    		log.info("get patient_image | NO_Parameter");
-    		throw new ApiException(ExceptionEnum.NO_Parameter);
-    	}
-    	
-    	log.info("get patient_image | param => name : {}", name);
-    	
+        public ResponseEntity<?> downloadImageToFileSystem(@RequestParam(required = true) Optional<String> name) throws IOException {
+        
+        if(!name.isPresent()) {
+            log.info("get patient_image | NO_Parameter");
+            throw new ApiException(ExceptionEnum.NO_Parameter);
+        }
+        
+        log.info("get patient_image | param => name : {}", name);
+        
         byte[] downloadImage = defaultService.downloadImageFromFileSystem(name.get());
         
         log.info("get patient_image | success");
@@ -225,41 +225,41 @@ public class DefaultController {
                 .body(downloadImage);
     }
     
-	@DeleteMapping(value = {"/patient"})
-	@ApiOperation(value = "환자 데이터 삭제", notes = "해당 환자 데이터에 등록된 데이터를 삭제한다.")
-	@ApiImplicitParam(name="name", value="이름", dataType="String")
-		public ResponseEntity<ApiEntity> patient_delete(@RequestParam(required = true) Optional<String> name) {
-		
-		if(!name.isPresent()) {
-			log.info("delete patient | NO_Parameter");
-			throw new ApiException(ExceptionEnum.NO_Parameter);
-		}
-		
-		log.info("delete patient | param => name : {}", name);
-		
-		ImageEntity patientEntity = defaultService.ImagetList(name.get());
-		
-		if(patientEntity == null) {
-			log.info("delete patient | NO_DATA");
-			throw new ApiException(ExceptionEnum.NO_DATA);
-		}else {
-			File deleteFile = new File(folderPath + File.separator + name.get() + patientEntity.getType());
-			
-			if(deleteFile.exists()) {
-	            deleteFile.delete(); 
-	            log.info("delete patient | file delete success");
-	        } else {
-	        	log.info("delete patient | file not exists");
-	        }
-			
-			defaultService.patientDelete(name.get(),patientEntity.getPatient_seq());
-		}
-		
-		log.info("delete patient | success");
-		return ResponseEntity.status(HttpStatus.OK)
-							 .body(ApiEntity.builder()
-							 .Code("success")
-							 .Message("[ " + name.get() + " ] 님의 데이터가 정상적으로 삭제되었습니다.")
-							 .build());
-	}
+    @DeleteMapping(value = {"/patient"})
+    @ApiOperation(value = "환자 데이터 삭제", notes = "해당 환자 데이터에 등록된 데이터를 삭제한다.")
+    @ApiImplicitParam(name="name", value="이름", dataType="String")
+        public ResponseEntity<ApiEntity> patient_delete(@RequestParam(required = true) Optional<String> name) {
+        
+        if(!name.isPresent()) {
+            log.info("delete patient | NO_Parameter");
+            throw new ApiException(ExceptionEnum.NO_Parameter);
+        }
+        
+        log.info("delete patient | param => name : {}", name);
+        
+        ImageEntity patientEntity = defaultService.ImagetList(name.get());
+        
+        if(patientEntity == null) {
+            log.info("delete patient | NO_DATA");
+            throw new ApiException(ExceptionEnum.NO_DATA);
+        }else {
+            File deleteFile = new File(folderPath + File.separator + name.get() + patientEntity.getType());
+            
+            if(deleteFile.exists()) {
+                deleteFile.delete(); 
+                log.info("delete patient | file delete success");
+            } else {
+                log.info("delete patient | file not exists");
+            }
+            
+            defaultService.patientDelete(name.get(),patientEntity.getPatient_seq());
+        }
+        
+        log.info("delete patient | success");
+        return ResponseEntity.status(HttpStatus.OK)
+                             .body(ApiEntity.builder()
+                             .Code("success")
+                             .Message("[ " + name.get() + " ] 님의 데이터가 정상적으로 삭제되었습니다.")
+                             .build());
+    }
 }

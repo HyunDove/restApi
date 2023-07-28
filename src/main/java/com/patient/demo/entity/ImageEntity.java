@@ -49,7 +49,7 @@ public class ImageEntity {
     @CreatedDate
     @Column(updatable = false)
     @Convert(converter = LocalDateTimeConverter.class)
-    private LocalDateTime create_date;	// 생성일자
-    private LocalDateTime delete_date;	// 삭제일자
+    private LocalDateTime create_date;    // 생성일자
+    private LocalDateTime delete_date;    // 삭제일자
     
 }
