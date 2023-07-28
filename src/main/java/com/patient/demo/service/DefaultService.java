@@ -36,7 +36,7 @@ import lombok.extern.slf4j.Slf4j;
 public class DefaultService {
 	
     private final PatientRepository patientRepository;
-	private final ImageRepository ImageRepository;
+    private final ImageRepository ImageRepository;
 	private final EntityManagerFactory entityManagerFactory;
 	
 	@Value("${local.path}")
