@@ -33,19 +33,19 @@ import lombok.Setter;
 @EntityListeners(AuditingEntityListener.class)
 public class PatientEntity {
 	
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @ApiModelProperty(hidden = true)
-    private int seq;			// 고유번호
+    private int seq;			
     
     @Id
-    @ApiModelProperty(position = 1 ,example = "가나다라", required = true)
-	private String name;		// 이름
+    @ApiModelProperty(position = 1 ,example = "홍길동", required = true)
+	private String name;		
     @ApiModelProperty(position = 2 ,example = "24", required = true)
-	private int age;			// 나이
-    @ApiModelProperty(position = 3 ,example = "남", required = true)
-    private String gender;		// 성별
+	private int age;			
+    @ApiModelProperty(position = 3 ,example = "남자", required = true)
+    private String gender;		
     @ApiModelProperty(position = 4 ,example = "유", required = true)
-    private String disease;		// 질병여부
+    private String disease;		
     
     @ApiModelProperty(hidden = true)
     @Column(columnDefinition = "미삭제")
@@ -56,6 +56,7 @@ public class PatientEntity {
     @Convert(converter = LocalDateTimeConverter.class)
     @ApiModelProperty(hidden = true)
     private LocalDateTime create_date;	// 생성일자
+    
     @ApiModelProperty(hidden = true)
     private LocalDateTime delete_date;	// 삭제일자
     

@@ -32,7 +32,6 @@ import lombok.extern.slf4j.Slf4j;
 
 @RequiredArgsConstructor
 @Service
-@Slf4j
 @PropertySource("classpath:system.properties")
 public class DefaultService {
 	
@@ -52,12 +51,12 @@ public class DefaultService {
 	}
 	
 	public List<SearchSummary> patientList(String name){
-		/*
-		 * 2023-07-27 native query를 위하여 주석처리
-		 * Specification<PatientEntity> spec = (root,query,criteriaBuilder) -> null;
-		 * spec = spec.and(PatientSpecification.equalsDelete_flag("미삭제")); spec =
-		 * spec.and(PatientSpecification.equalsSeq(seq.get()));
-		 */
+	/*
+	 * 2023-07-27 native query를 위하여 주석처리
+	 * Specification<PatientEntity> spec = (root,query,criteriaBuilder) -> null;
+	 * spec = spec.and(PatientSpecification.equalsDelete_flag("미삭제")); spec =
+	 * spec.and(PatientSpecification.equalsSeq(seq.get()));
+	 */
 		
 		return patientRepository.findSearchName(name);
 	}
@@ -86,7 +85,6 @@ public class DefaultService {
         return imageEntity;
     }
 
-	// 이미지 파일로 압축하기
 	public byte[] downloadImageFromFileSystem(String name) throws IOException {
 		
 		ImageEntity imageHashMap = ImageRepository.findByName(name);
@@ -98,7 +96,9 @@ public class DefaultService {
         return Files.readAllBytes(new File(fileFullPath).toPath());
     }
 	
-	// dirty checking
+	/* Dirty Checking
+	 * 설정한 값만 수정하게 구현 
+	 */
 	@Transactional
 	public void patientDelete(String name, int seq){
 		EntityManager em = entityManagerFactory.createEntityManager();
