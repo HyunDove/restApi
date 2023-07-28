@@ -33,4 +33,4 @@ build/
 .vscode/
 
 ### properties ##
-src/**/application-db.properties
+application-db.properties
