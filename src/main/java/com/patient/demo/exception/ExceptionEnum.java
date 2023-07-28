@@ -20,7 +20,7 @@ public enum ExceptionEnum {
     ALREADY_SEARCH(HttpStatus.BAD_REQUEST, "E0003", "이미 등록된 환자입니다."),
 
     // customer Exception [ FILE ]
-	ALREADY_FILE(HttpStatus.BAD_REQUEST, "I0001", "해당 데이터에 이미 이미지가 등록되어있습니다."),
+	ALREADY_FILE(HttpStatus.BAD_REQUEST, "I0001", "해당 데이터에 이미지가 등록되어있습니다."),
 	CHECK_FILE(HttpStatus.BAD_REQUEST, "I0002", "이미지 파일은 jpg, png만 가능합니다."),
 	EMPTY_FILE(HttpStatus.BAD_REQUEST, "I0003", "이미지 파일이 비어있습니다."),
 	
