@@ -21,7 +21,8 @@
 
 ## 🛠 DataBase ERD
 
-![onealog](/assets/readme/easyme.png) 
+![RestApi](https://github.com/HyunDove/restApi/assets/139856413/0c3edff2-4628-4ebd-aa47-0706c4b1ff62)
+
    
 
 
