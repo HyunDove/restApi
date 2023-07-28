@@ -73,12 +73,12 @@ public class DefaultService {
         
         ImageEntity imageEntity = ImageRepository.save(
                 ImageEntity.builder()
-                        .name(params.get("name").toString())
-                        .type(params.get("type").toString())
-                        .size(Long.parseLong(params.get("size").toString()))
-                        .patient_seq(Integer.parseInt(params.get("patient_seq").toString()))
-                        .path(params.get("path").toString())
-                        .build());
+                           .name(params.get("name").toString())
+                           .type(params.get("type").toString())
+                           .size(Long.parseLong(params.get("size").toString()))
+                           .patient_seq(Integer.parseInt(params.get("patient_seq").toString()))
+                           .path(params.get("path").toString())
+                           .build());
         
         if(imageEntity == null) throw new ApiException(ExceptionEnum.RUNTIME_EXCEPTION);
         
@@ -103,14 +103,19 @@ public class DefaultService {
     public void patientDelete(String name, int seq){
         EntityManager em = entityManagerFactory.createEntityManager();
         EntityTransaction tx = em.getTransaction();
+        
         tx.begin();
+        
+        // info 수정
         PatientEntity info_ent = em.find(PatientEntity.class, name);
         info_ent.setDelete_flag("삭제");
         info_ent.setDelete_date(LocalDateTime.now());
         
+        // image 수정        
         ImageEntity file_ent = em.find(ImageEntity.class, seq);
         file_ent.setDelete_flag("삭제");
         file_ent.setDelete_date(LocalDateTime.now());
+        
         tx.commit();
     }
     

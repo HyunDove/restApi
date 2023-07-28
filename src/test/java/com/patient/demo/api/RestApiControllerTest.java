@@ -48,10 +48,10 @@ public class RestApiControllerTest {
         
         // Given
         PatientEntity patientEntity = PatientEntity.builder()
-                                                   .name("말티즈")     // 이름
-                                                   .age(28)         // 나이
-                                                   .gender("남자")    // 성별 [ 남자 / 여자 ]
-                                                   .disease("유")    // 질병유무 [ 유 / 무 ]
+                                                   .name("말티즈")
+                                                   .age(28)     
+                                                   .gender("남자")
+                                                   .disease("유")
                                                    .build();
         
         String json = objectMapper.writeValueAsString(patientEntity);
@@ -73,16 +73,16 @@ public class RestApiControllerTest {
     public void 환자_등록_이미지업로드() throws Exception {
         
         // Given
-        String fileName = "홍길동"; //파일명
-        String contentType = "png"; //파일타입
-        String filePath = folderPath + File.separator + fileName + "." + contentType; //파일경로
+        String fileName = "홍길동";
+        String contentType = "png";
+        String filePath = folderPath + File.separator + fileName + "." + contentType;
         
         
         // When
         MockMultipartFile image = new MockMultipartFile("image",        // name
-                                                        "test.png",        // originalFileName
+                                                        "test.png",     // originalFileName
                                                         "image/png",    // Type
-                                                        new FileInputStream(filePath)); // 실제 파일 경로
+                                                        new FileInputStream(filePath)); // real file path
         // Then
         mockMvc.perform(
                 multipart("/api/v1/patient/image")

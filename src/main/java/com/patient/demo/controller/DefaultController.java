@@ -182,9 +182,9 @@ public class DefaultController {
         HashMap<String, Object> params = new HashMap<String, Object>();
         
         String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("api/v1/patient/image/")
-                .path(name.get()+"")
-                .toUriString();
+                                                            .path("api/v1/patient/image/")
+                                                            .path(name.get()+"")
+                                                            .toUriString();
         
         params.put("name", image.getOriginalFilename());
         params.put("type", contentType);
@@ -221,8 +221,8 @@ public class DefaultController {
         
         log.info("get patient_image | success");
         return ResponseEntity.status(HttpStatus.OK)
-                .contentType(MediaType.valueOf("image/png"))
-                .body(downloadImage);
+                             .contentType(MediaType.valueOf("image/png"))
+                             .body(downloadImage);
     }
     
     @DeleteMapping(value = {"/patient"})
