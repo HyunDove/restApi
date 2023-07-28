@@ -35,7 +35,7 @@ import lombok.extern.slf4j.Slf4j;
 @PropertySource("classpath:system.properties")
 public class DefaultService {
 	
-	private final PatientRepository patientRepository;
+    private final PatientRepository patientRepository;
 	private final ImageRepository ImageRepository;
 	private final EntityManagerFactory entityManagerFactory;
 	
@@ -47,7 +47,7 @@ public class DefaultService {
 	}
 	
 	public List<SearchSummary> patientList(){
-		return patientRepository.findAllList();
+	    return patientRepository.findAllList();
 	}
 	
 	public List<SearchSummary> patientList(String name){
