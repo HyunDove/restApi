@@ -89,7 +89,6 @@ public class DefaultController {
 			+ "환자 정보를 등록한다.\n"
 			+ "※ 단 이미지까지 업로드 한 환자만 조회된다.")
 	@PostMapping("/patient")
-//		public ResponseEntity<ApiEntity> patient_insert(@RequestBody HashMap<String, String> params) {
 	public ResponseEntity<ApiEntity> patient_insert(@RequestBody PatientEntity params) {
 		
 		if( params == null || 
