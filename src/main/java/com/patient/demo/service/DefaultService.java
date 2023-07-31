@@ -81,9 +81,9 @@ public class DefaultService {
     public ImageEntity uploadImage(MultipartFile image, List<PatientEntity> patientEntity, String name) throws IllegalStateException, IOException {
         
         String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("api/v1/patient/image/")
-                .path(name)
-                .toUriString();
+                                                            .path("api/v1/patient/image/")
+                                                            .path(name)
+                                                            .toUriString();
         
         String contentType = common.getFileType(image.getContentType());
         

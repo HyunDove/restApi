@@ -197,7 +197,7 @@ public class DefaultController {
         }else {
             // file delete
             File deleteFile = new File(folderPath + File.separator + name.get() + patientEntity.getType());
-            log.info("deleteFile result : {}",common.fileDelete(deleteFile));
+            log.info("deleteFile result : {}", common.fileDelete(deleteFile));
             
             defaultService.patientDelete(name.get(),patientEntity.getPatient_seq());
         }
