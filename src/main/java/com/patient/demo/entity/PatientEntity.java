@@ -18,20 +18,17 @@ import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters.LocalDa
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
 @Getter
 @Setter
-@Builder
 @ToString
+@Builder
 @AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @DynamicUpdate // 변경한 필드만 대응
 @Entity(name = "patient_info")
 @EntityListeners(AuditingEntityListener.class)
