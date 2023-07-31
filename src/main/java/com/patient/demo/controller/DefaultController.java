@@ -6,12 +6,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -66,8 +70,9 @@ public class DefaultController {
         /* 
          * 데이터가 없을 시 전체조회, 데이터가 있으면 해당 parameter만 조회
          */
-        if("".equals(name) || name == null) patientList = defaultService.patientList(); 
-        else patientList = defaultService.patientList(name);
+        
+        if(StringUtils.hasText(name)) patientList = defaultService.patientList(name); 
+        else patientList = defaultService.patientList(); 
         
         log.info("get patient | param => name : {}", name);
         
@@ -91,32 +96,14 @@ public class DefaultController {
             + "환자 정보를 등록한다.\n"
             + "※ 단 이미지까지 업로드 한 환자만 조회된다.")
     @PostMapping("/patient")
-    public ResponseEntity<ApiEntity> patient_insert(@RequestBody(required = true) PatientEntity params) {
+    public ResponseEntity<ApiEntity> patient_insert(@Valid @RequestBody(required = true) PatientEntity patientEntity) {
         
-        if( params == null || 
-                params.getName().isEmpty() ||
-                Integer.valueOf(params.getAge()) == null ||
-                params.getGender().isEmpty() ||
-                params.getDisease().isEmpty()) 
-        {
-            log.error("post patient | param no_data Exception");
-            throw new ApiException(ExceptionEnum.NO_Parameter);
-        }
-            
-        log.info("post patient | params => params : {}", params);
+        log.info("post patient | params => : {}", patientEntity.toString());
         
-        if(!defaultService.patientOriginalList(params.getName()).isEmpty()) {
+        if(!defaultService.patientOriginalList(patientEntity.getName()).isEmpty()) {
             log.error("post patient | insert => ALREADY_SEARCH Exception");
             throw new ApiException(ExceptionEnum.ALREADY_SEARCH); 
         }
-        
-        PatientEntity patientEntity = PatientEntity.builder().
-                                      name(params.getName()).
-                                      age(Integer.valueOf(params.getAge())).
-                                      gender(params.getName()).
-                                      disease(params.getName()).
-                                      delete_flag("미삭제").
-                                      build();
         
         if(defaultService.patientInsert(patientEntity) == null) {
             log.error("post patient | RUNTIME EXCEPTION");
@@ -127,7 +114,7 @@ public class DefaultController {
         return ResponseEntity.status(HttpStatus.OK)
                              .body(ApiEntity.builder()
                              .Code("success")
-                             .Message("[" + params.getName() + "] 님이 정상적으로 등록되었습니다. 이미지를 업로드해야 조회됩니다.")
+                             .Message("[" + patientEntity.getName() + "] 님이 정상적으로 등록되었습니다. 이미지를 업로드해야 조회됩니다.")
                              .build());
     }
     

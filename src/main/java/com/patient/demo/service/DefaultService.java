@@ -61,7 +61,16 @@ public class DefaultService {
         return ImageRepository.findByName(name);
     }
     
-    public PatientEntity patientInsert(PatientEntity patientEntity){
+    public PatientEntity patientInsert(PatientEntity patientEntity ){
+        
+        patientEntity = PatientEntity.builder().
+                                      name(patientEntity.getName()).
+                                      age(Integer.valueOf(patientEntity.getAge())).
+                                      gender(patientEntity.getName()).
+                                      disease(patientEntity.getName()).
+                                      delete_flag("미삭제").
+                                      build();
+        
         return patientRepository.save(patientEntity);
     }
     

@@ -9,6 +9,8 @@ import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.annotation.CreatedDate;
@@ -22,10 +24,12 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
 @Builder
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @DynamicUpdate // 변경한 필드만 대응
@@ -37,13 +41,20 @@ public class PatientEntity {
     @ApiModelProperty(hidden = true)
     private int seq;            
     
+    @NotEmpty
     @Id
     @ApiModelProperty(position = 1 ,example = "홍길동", required = true)
-    private String name;        
+    private String name;      
+    
+    @NotNull
     @ApiModelProperty(position = 2 ,example = "24", required = true)
-    private int age;            
+    private int age;
+    
+    @NotEmpty
     @ApiModelProperty(position = 3 ,example = "남자", required = true)
-    private String gender;        
+    private String gender;
+    
+    @NotEmpty
     @ApiModelProperty(position = 4 ,example = "유", required = true)
     private String disease;        
     
