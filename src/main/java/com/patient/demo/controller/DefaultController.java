@@ -80,7 +80,6 @@ public class DefaultController {
             log.error("get patient | param NO_DATA Exception");
             throw new ApiException(ExceptionEnum.NO_DATA);
         }else{
-        
             log.info("get patient | search success");
             return ResponseEntity.status(HttpStatus.OK)
                                  .body(ApiEntity.builder()
@@ -132,39 +131,21 @@ public class DefaultController {
         
         List<PatientEntity> patientEntity = defaultService.patientOriginalList(name.get());
         
-        if(defaultService.ImagetList(name.get()) != null) {
-            log.error("post patient_image | ALREADY_FILE EXCEPTION");
-            throw new ApiException(ExceptionEnum.ALREADY_FILE);
-        }
-        
         if(patientEntity.isEmpty()) {
             log.error("post patient_image | NO_DATA EXCEPTION");
             throw new ApiException(ExceptionEnum.NO_DATA);
         }
         
+        if(defaultService.ImagetList(name.get()) != null) {
+            log.error("post patient_image | ALREADY_FILE EXCEPTION");
+            throw new ApiException(ExceptionEnum.ALREADY_FILE);
+        }
+        
         File folder = new File(folderPath);
         String contentType = common.getFileType(image.getContentType());
         
-        if(!folder.isDirectory()) {
-            folder.mkdirs();
-        }
-        
-        if (image.isEmpty()) {
-            log.error("post patient_image | EMPTY_FILE EXCEPTION");
-            throw new ApiException(ExceptionEnum.EMPTY_FILE);
-        } else {
-            
-            if (ObjectUtils.isEmpty(contentType)) {
-                log.error("post patient_image | CHECK_FILE EXCEPTION");
-                throw new ApiException(ExceptionEnum.CHECK_FILE); 
-            }
-            
-            String fullFilePath = folderPath + File.separator + name.get() + contentType;
-            File image_file = new File(fullFilePath);
-            
-            image.transferTo(image_file);
-            
-        }
+        // file upload
+        common.fileUpload(folder, image, name.get());
         
         HashMap<String, Object> params = new HashMap<String, Object>();
         
@@ -232,12 +213,8 @@ public class DefaultController {
         }else {
             File deleteFile = new File(folderPath + File.separator + name.get() + patientEntity.getType());
             
-            if(deleteFile.exists()) {
-                deleteFile.delete(); 
-                log.info("delete patient | file delete success");
-            } else {
-                log.info("delete patient | file not exists");
-            }
+            // file delete
+            log.info("deleteFile result : {}",common.fileDelete(deleteFile));
             
             defaultService.patientDelete(name.get(),patientEntity.getPatient_seq());
         }
