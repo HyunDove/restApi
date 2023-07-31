@@ -70,7 +70,6 @@ public class DefaultController {
         /* 
          * 데이터가 없을 시 전체조회, 데이터가 있으면 해당 parameter만 조회
          */
-        
         if(StringUtils.hasText(name)) patientList = defaultService.patientList(name); 
         else patientList = defaultService.patientList(); 
         
@@ -141,26 +140,11 @@ public class DefaultController {
             throw new ApiException(ExceptionEnum.ALREADY_FILE);
         }
         
-        File folder = new File(folderPath);
-        String contentType = common.getFileType(image.getContentType());
-        
         // file upload
+        File folder = new File(folderPath);
         common.fileUpload(folder, image, name.get());
         
-        HashMap<String, Object> params = new HashMap<String, Object>();
-        
-        String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
-                                                            .path("api/v1/patient/image/")
-                                                            .path(name.get()+"")
-                                                            .toUriString();
-        
-        params.put("name", image.getOriginalFilename());
-        params.put("type", contentType);
-        params.put("size", image.getSize());
-        params.put("patient_seq", patientEntity.get(0).getSeq());
-        params.put("path", fileDownloadUri);
-        
-        if(defaultService.uploadImage(params) == null) {
+        if(defaultService.uploadImage(image, patientEntity, name.get()) == null) {
             log.error("post patient_image | RUNTIME EXCEPTION");
             throw new ApiException(ExceptionEnum.RUNTIME_EXCEPTION);
         }
@@ -211,9 +195,8 @@ public class DefaultController {
             log.info("delete patient | NO_DATA");
             throw new ApiException(ExceptionEnum.NO_DATA);
         }else {
-            File deleteFile = new File(folderPath + File.separator + name.get() + patientEntity.getType());
-            
             // file delete
+            File deleteFile = new File(folderPath + File.separator + name.get() + patientEntity.getType());
             log.info("deleteFile result : {}",common.fileDelete(deleteFile));
             
             defaultService.patientDelete(name.get(),patientEntity.getPatient_seq());

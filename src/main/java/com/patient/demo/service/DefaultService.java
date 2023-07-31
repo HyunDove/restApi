@@ -15,6 +15,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.patient.demo.entity.ImageEntity;
 import com.patient.demo.entity.PatientEntity;
@@ -23,6 +25,7 @@ import com.patient.demo.exception.ApiException;
 import com.patient.demo.exception.ExceptionEnum;
 import com.patient.demo.repo.ImageRepository;
 import com.patient.demo.repo.PatientRepository;
+import com.patient.demo.util.Common;
 
 import lombok.RequiredArgsConstructor;
 
@@ -34,6 +37,7 @@ public class DefaultService {
     private final PatientRepository patientRepository;
     private final ImageRepository ImageRepository;
     private final EntityManagerFactory entityManagerFactory;
+    private final Common common;
     
     @Value("${local.path}")
     private String folderPath;
@@ -74,16 +78,23 @@ public class DefaultService {
         return patientRepository.save(patientEntity);
     }
     
-    public ImageEntity uploadImage(HashMap<String, Object> params) throws IllegalStateException, IOException {
+    public ImageEntity uploadImage(MultipartFile image, List<PatientEntity> patientEntity, String name) throws IllegalStateException, IOException {
+        
+        String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("api/v1/patient/image/")
+                .path(name)
+                .toUriString();
+        
+        String contentType = common.getFileType(image.getContentType());
         
         ImageEntity imageEntity = ImageRepository.save(
-                ImageEntity.builder()
-                           .name(params.get("name").toString())
-                           .type(params.get("type").toString())
-                           .size(Long.parseLong(params.get("size").toString()))
-                           .patient_seq(Integer.parseInt(params.get("patient_seq").toString()))
-                           .path(params.get("path").toString())
-                           .build());
+                                  ImageEntity.builder()
+                                             .name(image.getOriginalFilename())
+                                             .type(contentType)
+                                             .size(image.getSize())
+                                             .patient_seq(patientEntity.get(0).getSeq())
+                                             .path(fileDownloadUri)
+                                             .build());
         
         if(imageEntity == null) throw new ApiException(ExceptionEnum.RUNTIME_EXCEPTION);
         

@@ -40,6 +40,7 @@ public class Common {
         
         String contentType = getFileType(image.getContentType());
         
+        // 해당 경로에 폴더가 없으면 생성해준다.
         if(!folder.isDirectory()) {
             folder.mkdirs();
         }
