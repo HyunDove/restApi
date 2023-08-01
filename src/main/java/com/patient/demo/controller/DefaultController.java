@@ -1,32 +1,5 @@
 package com.patient.demo.controller;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
-
-import javax.validation.Valid;
-
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.util.ObjectUtils;
-import org.springframework.util.StringUtils;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
 import com.patient.demo.entity.ApiEntity;
 import com.patient.demo.entity.ImageEntity;
 import com.patient.demo.entity.PatientEntity;
@@ -35,12 +8,25 @@ import com.patient.demo.exception.ApiException;
 import com.patient.demo.exception.ExceptionEnum;
 import com.patient.demo.service.DefaultService;
 import com.patient.demo.util.Common;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.validation.Valid;
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -57,8 +43,8 @@ public class DefaultController {
     @Value("${local.path}")
     private String folderPath;
     
-    @ApiOperation(value = "환자 목록 조회", notes = ""
-            + "name 값을 입력하지않으면 모든 환자 조회 \n "
+    @ApiOperation(value = "환자 목록 조회", notes =
+              "name 값을 입력하지않으면 모든 환자 조회 \n "
             + "name 값을 입력하면 해당 환자 조회한다. \n"
             + "※ 단 이미지까지 업로드 한 환자만 조회된다.")
     @ApiImplicitParam(name="name", value="이름", dataType="String")
@@ -88,10 +74,9 @@ public class DefaultController {
                                  .build());
         }
     }
-    
-    
-    @ApiOperation(value = "환자 등록", notes = ""
-            + "환자 정보를 등록한다.\n"
+
+    @ApiOperation(value = "환자 등록", notes =
+              "환자 정보를 등록한다.\n"
             + "※ 단 이미지까지 업로드 한 환자만 조회된다.")
     @PostMapping("/patient")
     public ResponseEntity<ApiEntity> patient_insert(@Valid @RequestBody(required = true) PatientEntity patientEntity) {
@@ -126,7 +111,7 @@ public class DefaultController {
             throw new ApiException(ExceptionEnum.NO_Parameter); 
         }
         
-        log.info("post patient_image | param => name : {}", image.getContentType() ,name);
+        log.info("post patient_image | param => name : {}",name.get());
         
         List<PatientEntity> patientEntity = defaultService.patientOriginalList(name.get());
         
@@ -161,13 +146,13 @@ public class DefaultController {
     @ApiOperation(value = "환자 파일 가져오기", notes = "해당 환자 데이터에 등록된 이미지파일을 가져온다.")
     @ApiImplicitParam(name="name", value="이름", dataType="String")
         public ResponseEntity<?> downloadImageToFileSystem(@RequestParam(required = true) Optional<String> name) throws IOException {
-        
+
         if(!name.isPresent()) {
             log.info("get patient_image | NO_Parameter");
             throw new ApiException(ExceptionEnum.NO_Parameter);
         }
         
-        log.info("get patient_image | param => name : {}", name);
+        log.info("get patient_image | param => name : {}", name.get());
         
         byte[] downloadImage = defaultService.downloadImageFromFileSystem(name.get());
         
@@ -186,7 +171,7 @@ public class DefaultController {
             log.info("delete patient | NO_Parameter");
             throw new ApiException(ExceptionEnum.NO_Parameter);
         }
-        
+
         log.info("delete patient | param => name : {}", name);
         
         ImageEntity patientEntity = defaultService.ImagetList(name.get());

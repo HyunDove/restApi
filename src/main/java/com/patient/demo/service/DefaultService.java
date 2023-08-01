@@ -1,23 +1,5 @@
 package com.patient.demo.service;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
-
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
 import com.patient.demo.entity.ImageEntity;
 import com.patient.demo.entity.PatientEntity;
 import com.patient.demo.entity.SearchSummary;
@@ -26,12 +8,26 @@ import com.patient.demo.exception.ExceptionEnum;
 import com.patient.demo.repo.ImageRepository;
 import com.patient.demo.repo.PatientRepository;
 import com.patient.demo.util.Common;
-
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-@RequiredArgsConstructor
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityTransaction;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.List;
+
 @Service
+@RequiredArgsConstructor
 @PropertySource("classpath:system.properties")
+@Transactional
 public class DefaultService {
     
     private final PatientRepository patientRepository;
@@ -70,15 +66,15 @@ public class DefaultService {
         patientEntity = PatientEntity.builder().
                                       name(patientEntity.getName()).
                                       age(Integer.valueOf(patientEntity.getAge())).
-                                      gender(patientEntity.getName()).
-                                      disease(patientEntity.getName()).
+                                      gender(patientEntity.getGender()).
+                                      disease(patientEntity.getDisease()).
                                       delete_flag("미삭제").
                                       build();
         
         return patientRepository.save(patientEntity);
     }
     
-    public ImageEntity uploadImage(MultipartFile image, List<PatientEntity> patientEntity, String name) throws IllegalStateException, IOException {
+    public ImageEntity uploadImage(MultipartFile image, List<PatientEntity> patientEntity, String name) throws IllegalStateException {
         
         String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
                                                             .path("api/v1/patient/image/")
@@ -115,7 +111,7 @@ public class DefaultService {
     /* Dirty Checking
      * 설정한 값만 수정하게 구현 
      */
-    @Transactional
+
     public void patientDelete(String name, int seq){
         EntityManager em = entityManagerFactory.createEntityManager();
         EntityTransaction tx = em.getTransaction();
@@ -125,13 +121,11 @@ public class DefaultService {
         // info 수정
         PatientEntity info_ent = em.find(PatientEntity.class, name);
         info_ent.setDelete_flag("삭제");
-        info_ent.setDelete_date(LocalDateTime.now());
-        
+
         // image 수정        
         ImageEntity file_ent = em.find(ImageEntity.class, seq);
         file_ent.setDelete_flag("삭제");
-        file_ent.setDelete_date(LocalDateTime.now());
-        
+
         tx.commit();
     }
     
