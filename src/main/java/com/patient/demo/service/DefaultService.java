@@ -37,7 +37,7 @@ public class DefaultService {
     
     @Value("${local.path}")
     private String folderPath;
-    
+
     public List<PatientEntity> patientOriginalList(String name){
         return patientRepository.findByName(name);
     }
@@ -68,7 +68,6 @@ public class DefaultService {
                                       age(Integer.valueOf(patientEntity.getAge())).
                                       gender(patientEntity.getGender()).
                                       disease(patientEntity.getDisease()).
-                                      delete_flag("미삭제").
                                       build();
         
         return patientRepository.save(patientEntity);
@@ -91,7 +90,7 @@ public class DefaultService {
                                              .patient_seq(patientEntity.get(0).getSeq())
                                              .path(fileDownloadUri)
                                              .build());
-        
+
         if(imageEntity == null) throw new ApiException(ExceptionEnum.RUNTIME_EXCEPTION);
         
         return imageEntity;
@@ -117,16 +116,21 @@ public class DefaultService {
         EntityTransaction tx = em.getTransaction();
         
         tx.begin();
-        
+
+        /*
+        * Repository 영역에서 처리 할 수 있게 처리 예정
+        */
+
         // info 수정
         PatientEntity info_ent = em.find(PatientEntity.class, name);
-        info_ent.setDelete_flag("삭제");
+        info_ent.setDeleteFlag("삭제");
 
-        // image 수정        
+        // image 수정
         ImageEntity file_ent = em.find(ImageEntity.class, seq);
-        file_ent.setDelete_flag("삭제");
+        file_ent.setDeleteFlag("삭제");
 
         tx.commit();
+
     }
     
 }

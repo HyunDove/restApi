@@ -9,14 +9,13 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 @Getter
-@Setter
 @ToString
 @Builder
 @AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = AccessLevel.PUBLIC)
 @DynamicUpdate // 변경한 필드만 대응
 @Entity(name = "patient_info")
-public class PatientEntity extends baseEntity {
+public class PatientEntity extends BaseEntity {
 
     @GeneratedValue(strategy = GenerationType.SEQUENCE) // DB 시퀀스를 사용해서 기본키 할당
     @ApiModelProperty(hidden = true)
@@ -38,9 +37,5 @@ public class PatientEntity extends baseEntity {
     @NotEmpty
     @ApiModelProperty(position = 4 ,example = "유", required = true)
     private String disease;
-
-    @ApiModelProperty(hidden = true)
-    @Column(columnDefinition = "미삭제")
-    private String delete_flag;    // 삭제 여부
 
 }

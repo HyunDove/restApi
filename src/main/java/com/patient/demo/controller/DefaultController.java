@@ -106,11 +106,11 @@ public class DefaultController {
     @PostMapping(value = "/patient/image")
     public ResponseEntity<ApiEntity> uploadImage(@RequestPart(name = "image", required = true) MultipartFile image, @RequestParam(name = "name", required = true) Optional<String> name) throws IllegalStateException, IOException {
         
-        if(!name.isPresent()) {
+        if(!name.isPresent() || image.isEmpty()) {
             log.error("post patient_image | NO_Parameter EXCEPTION");
             throw new ApiException(ExceptionEnum.NO_Parameter); 
         }
-        
+
         log.info("post patient_image | param => name : {}",name.get());
         
         List<PatientEntity> patientEntity = defaultService.patientOriginalList(name.get());
@@ -124,7 +124,7 @@ public class DefaultController {
             log.error("post patient_image | ALREADY_FILE EXCEPTION");
             throw new ApiException(ExceptionEnum.ALREADY_FILE);
         }
-        
+
         // file upload
         File folder = new File(folderPath);
         common.fileUpload(folder, image, name.get());
